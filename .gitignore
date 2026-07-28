@@ -1,0 +1,71 @@
+﻿## ----------------------------------------------------------------------
+## .NET / C# Ignores
+## ----------------------------------------------------------------------
+
+# Pastas de compilação e artefatos gerados
+[Bb]in/
+[Oo]bj/
+out/
+[Ll]og/
+[Ll]ogs/
+
+# Pacotes do NuGet
+*.nupkg
+*.snupkg
+# Pasta de pacotes globais/locais (se usada)
+**/packages/*
+!**/packages/build/
+
+# Resultados de testes e cobertura de código
+*.trx
+*.coverage
+*.coveragexml
+TestResults/
+[Tt]est[Rr]esult*/
+
+# Arquivos de usuário e configurações locais do .NET / Rider / Visual Studio
+*.user
+*.userosscache
+*.sln.docstates
+*.suo
+*.userprefs
+appsettings.Development.json
+appsettings.json
+
+## ----------------------------------------------------------------------
+## IDEs e Editores
+## ----------------------------------------------------------------------
+
+# Visual Studio
+.vs/
+*.csproj.user
+
+# VS Code
+.vscode/
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+# JetBrains Rider / ReSharper
+.idea/
+*_ReSharper*/
+
+## ----------------------------------------------------------------------
+## Sistema Operacional e Outros
+## ----------------------------------------------------------------------
+
+# Windows
+Thumbs.db
+Desktop.ini
+ehthumbs.db
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSSharedFileList
+
+# Arquivos temporários e de swap
+*.swp
+*~
+*.tmp
