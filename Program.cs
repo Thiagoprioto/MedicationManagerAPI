@@ -1,4 +1,13 @@
+using MedicationManager.Context;
+using Microsoft.EntityFrameworkCore;
+
 var builder = WebApplication.CreateBuilder(args);
+
+var connectionString = builder.Configuration.GetConnectionString("MedicationManagerDB");
+
+// O tipo no AddDbContext precisa ser MedicationManagerContext
+builder.Services.AddDbContext<MedicationManagerContext>(options =>
+    options.UseSqlServer(connectionString));
 
 // 1. Adiciona os serviços do Swagger clássico
 builder.Services.AddEndpointsApiExplorer();
