@@ -1,4 +1,5 @@
-﻿using MedicationManager.Enums;
+﻿using MedicationManager.DTO.Response;
+using MedicationManager.Enums;
 using Microsoft.EntityFrameworkCore;
 
 namespace MedicationManager.Entities;
