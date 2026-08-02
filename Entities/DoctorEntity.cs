@@ -1,6 +1,6 @@
 ﻿namespace MedicationManager.Entities;
 
-public class Doctor
+public class DoctorEntity
 {
         public int Id { get; set; }
         
