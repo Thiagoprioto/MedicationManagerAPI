@@ -1,4 +1,6 @@
 using MedicationManager.Context;
+using MedicationManager.Service;
+using MedicationManager.Service.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
 
@@ -8,6 +10,11 @@ var connectionString = builder.Configuration.GetConnectionString("MedicationMana
 
 builder.Services.AddDbContext<MedicationManagerContext>(options =>
     options.UseSqlServer(connectionString));
+
+builder.Services.AddControllers();
+
+builder.Services.AddScoped<IMedicationService, MedicationService>();
+builder.Services.AddScoped<IDoctorService, DoctorService>();
 
 builder.Services.AddOpenApi();
 
@@ -20,5 +27,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.MapControllers();
 
 app.Run();

@@ -1,13 +1,11 @@
 ﻿using MedicationManager.DTO;
-using MedicationManager.DTO.Response;
-using MedicationManager.Entities;
 
 namespace MedicationManager.Service.Interfaces;
 
 public interface IDoctorService
 {
-    Task<IEnumerable<DoctorResponse>> GetAllDoctorsAsync();
-    Task<DoctorResponse?> GetByIdAsync(int id);
-    Task<DoctorResponse> CreatedAsync(CreateDoctorRequest request);
+    Task<IEnumerable<DoctorDTO>> GetAllDoctorsAsync();
+    Task<DoctorDTO?> GetByIdAsync(int id);
+    Task<DoctorDTO> CreatedAsync(DoctorDTO doctorDto);
     Task<bool> DeleteAsync(int id);
 }

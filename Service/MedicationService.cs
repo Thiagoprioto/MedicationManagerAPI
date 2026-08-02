@@ -1,9 +1,8 @@
-﻿using System.Text.RegularExpressions;
-using MedicationManager.Context;
+﻿using MedicationManager.Context;
 using MedicationManager.DTO;
-using MedicationManager.DTO.Response;
 using MedicationManager.Entities;
 using MedicationManager.Service.Interfaces;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 
 namespace MedicationManager.Service;
@@ -17,80 +16,70 @@ public class MedicationService : IMedicationService
         _context = context;
     }
     
-    public Task<IEnumerable<MedicationResponse>> GetAllMedicationAsync()
+    public async Task<IEnumerable<MedicationDTO>> GetAllMedicationAsync()
     {
-        throw new NotImplementedException();
-    }
+        var medications = await _context.Medications.ToListAsync();
 
-    public async Task<MedicationResponse?> GetByIdAsync(int id)
-    {
-        var medication = await _context.Medications.FindAsync(id);
-        if (medication == null)
+        if (!medications.Any())
         {
-            return null;
+            throw new InvalidOperationException("Não existem medicamentos cadastrados.");
         }
 
-        return new MedicationResponse(
-            medication.Id,
-            medication.Name,
-            medication.Dosage,
-            medication.Classification,
-            medication.Price,
-            medication.DosageQuantityStock,
-            medication.NeedRecipe
-        );
+        return medications.Select(m => m.ToDTO());
     }
 
-    public async Task<MedicationResponse> CreatedAsync(CreateMedicationRequest request)
+    public async Task<MedicationDTO?> GetByIdAsync(int id)
     {
-        if (await _context.Medications.AnyAsync(m => m.Name == request.Name && m.Dosage == request.Dosage))
+        var medication = await _context.Medications.FindAsync(id);
+
+        if (medication == null) return null;
+        
+        return medication.ToDTO();
+    }
+
+    public async Task<MedicationDTO> CreateAsync(MedicationDTO medicationDto)
+    {
+        if (await _context.Medications.AnyAsync(m => m.Name == medicationDto.Name && m.Dosage == medicationDto.Dosage))
         {
-            throw new InvalidOperationException($"Já existe um medicamento cadastrado com o nome '{request.Name}'.");
+            throw new InvalidOperationException($"Já existe um medicamento cadastrado com o nome '{medicationDto.Name}'.");
         }
 
         
-        var medication = new Medication
-        {
-            Name = request.Name,
-            Dosage = request.Dosage,
-            Classification = request.Classification,
-            Price = request.Price,
-            DosageQuantityStock = request.DosageQuantityStock,
-            NeedRecipe = request.NeedRecipe
-        };
+        var medication = MedicationEntity.FromDTO(medicationDto);
 
         _context.Medications.Add(medication);
         await _context.SaveChangesAsync();
-
-        return new MedicationResponse(
-            medication.Id,
-            medication.Name,
-            medication.Dosage,
-            medication.Classification,
-            medication.Price,
-            medication.DosageQuantityStock,
-            medication.NeedRecipe
-        );
+        
+        return medication.ToDTO();
     }
 
-    public async Task<bool> UpdateStockAsync(int id, int quantity)
+    public async Task<MedicationDTO> UpdateAsync(MedicationDTO medicationDto)
     {
-        if (quantity < 0)
+        var updateMedication = await _context.Medications.FindAsync(medicationDto.Id);
+        
+        if (medicationDto == null)
         {
-            throw new ArgumentException("A quantidade de estoque não pode ser negativa.");
+            throw new ArgumentException("Remédio não encontrado.");
         }
-
-        var medication = await _context.Medications.FindAsync(id);
-
-        if (medication == null)
-        {
-            return false;
-        }
-
-        medication.DosageQuantityStock = quantity;
+        
+        updateMedication.UpdateFromDTO(medicationDto);
 
         await _context.SaveChangesAsync();
 
-        return true;
+        return updateMedication.ToDTO();
+    }
+
+    public async Task<MedicationDTO> DeleteAsync(int id)
+    {
+        var deleteMedication = await _context.Medications.FindAsync(id);
+        if (deleteMedication == null)
+        {
+            throw new InvalidOperationException(id.ToString("Remédio não encontrado"));
+        }
+
+        _context.Medications.Remove(deleteMedication);
+        await _context.SaveChangesAsync();
+
+        return deleteMedication.ToDTO();
     }
 }

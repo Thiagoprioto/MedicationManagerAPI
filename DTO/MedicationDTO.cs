@@ -1,8 +1,8 @@
 ﻿using MedicationManager.Enums;
 
-namespace MedicationManager.DTO.Response;
+namespace MedicationManager.DTO;
 
-public record MedicationResponse
+public record MedicationDTO
 (
     int Id,
     string Name,

@@ -11,6 +11,6 @@ public class MedicationManagerContext : DbContext
         
     }
 
-    public DbSet<Doctor> Doctors { get; set; }
-    public DbSet<Medication> Medications { get; set; }
+    public DbSet<DoctorEntity> Doctors { get; set; }
+    public DbSet<MedicationEntity> Medications { get; set; }
 }
