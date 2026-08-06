@@ -6,7 +6,7 @@ namespace MedicationManager.Controller;
 
 
 [ApiController]
-[Route("api/[controller]")]
+[Route("[controller]")]
 public class MedicationController : ControllerBase
 {
     private readonly IMedicationService _medicationService;
@@ -15,19 +15,16 @@ public class MedicationController : ControllerBase
     {
         _medicationService = medicationService;
     }
-
-    // GET: api/medication
-    [HttpGet]
+    
+    [HttpGet("GetMedications")]
     public async Task<ActionResult<IEnumerable<MedicationDTO>>> GetAll()
     {
         var medications = await _medicationService.GetAllMedicationAsync();
         
-        // Retorna HTTP 200 OK com a lista (mesmo que seja vazia [])
         return Ok(medications);
     }
-
-    // GET: api/medication/5
-    [HttpGet("{id:int}")]
+    
+    [HttpGet("obter/{id:int}")]
     public async Task<ActionResult<MedicationDTO>> GetById(int id)
     {
         var medications = await _medicationService.GetByIdAsync(id);
@@ -39,9 +36,8 @@ public class MedicationController : ControllerBase
 
         return Ok(medications);
     }
-
-    // POST: api/medication
-    [HttpPost]
+    
+    [HttpPost("cadastrar")]
     public async Task<ActionResult<MedicationDTO>> Create([FromBody] MedicationDTO dto)
     {
         try
@@ -56,9 +52,13 @@ public class MedicationController : ControllerBase
         }
     }
 
-    [HttpPut("{id:int}")]
-    public async Task<ActionResult<MedicationDTO>> Update([FromBody] MedicationDTO dto)
+    [HttpPut("atualizar/{id:int}")]
+    public async Task<ActionResult<MedicationDTO>> Update(int id,[FromBody] MedicationDTO dto)
     {
+        if (id != dto.Id)
+        {
+            return BadRequest(new { message = "O ID informado na URL não coincide com o ID do corpo da requisição." });
+        }
         try
         {
             var updateMedication = await _medicationService.UpdateAsync(dto);
@@ -71,7 +71,7 @@ public class MedicationController : ControllerBase
         }
     }
 
-    [HttpDelete("{id:int}")]
+    [HttpDelete("remover/{id:int}")]
     public async Task<ActionResult<MedicationDTO>> Delete(int id)
     {
         try

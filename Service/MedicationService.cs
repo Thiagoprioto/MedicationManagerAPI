@@ -2,7 +2,6 @@
 using MedicationManager.DTO;
 using MedicationManager.Entities;
 using MedicationManager.Service.Interfaces;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 
 namespace MedicationManager.Service;
@@ -19,12 +18,7 @@ public class MedicationService : IMedicationService
     public async Task<IEnumerable<MedicationDTO>> GetAllMedicationAsync()
     {
         var medications = await _context.Medications.ToListAsync();
-
-        if (!medications.Any())
-        {
-            throw new InvalidOperationException("Não existem medicamentos cadastrados.");
-        }
-
+        
         return medications.Select(m => m.ToDTO());
     }
 
@@ -57,9 +51,9 @@ public class MedicationService : IMedicationService
     {
         var updateMedication = await _context.Medications.FindAsync(medicationDto.Id);
         
-        if (medicationDto == null)
+        if (updateMedication == null)
         {
-            throw new ArgumentException("Remédio não encontrado.");
+            throw new InvalidOperationException("Remédio não encontrado.");
         }
         
         updateMedication.UpdateFromDTO(medicationDto);
