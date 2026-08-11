@@ -1,6 +1,6 @@
 ﻿using MedicationManager.Context;
 using MedicationManager.DTO;
-using MedicationManager.Entities;
+using MedicationManager.Mapper;
 using MedicationManager.Service.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
@@ -31,7 +31,7 @@ public class MedicationService : IMedicationService
         return medication.ToDTO();
     }
 
-    public async Task<MedicationDTO> CreateAsync(MedicationDTO medicationDto)
+    public async Task<MedicationDTO> CreatedAsync(MedicationDTO medicationDto)
     {
         if (await _context.Medications.AnyAsync(m => m.Name == medicationDto.Name && m.Dosage == medicationDto.Dosage))
         {
@@ -39,7 +39,7 @@ public class MedicationService : IMedicationService
         }
 
         
-        var medication = MedicationEntity.FromDTO(medicationDto);
+        var medication = MedicationMapper.FromDTO(medicationDto);
 
         _context.Medications.Add(medication);
         await _context.SaveChangesAsync();
@@ -47,7 +47,7 @@ public class MedicationService : IMedicationService
         return medication.ToDTO();
     }
 
-    public async Task<MedicationDTO> UpdateAsync(MedicationDTO medicationDto)
+    public async Task<MedicationDTO> UpdatedAsync(MedicationDTO medicationDto)
     {
         var updateMedication = await _context.Medications.FindAsync(medicationDto.Id);
         
