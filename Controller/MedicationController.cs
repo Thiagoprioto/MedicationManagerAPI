@@ -6,7 +6,7 @@ namespace MedicationManager.Controller;
 
 
 [ApiController]
-[Route("[controller]")]
+[Route("api/[controller]")]
 public class MedicationController : ControllerBase
 {
     private readonly IMedicationService _medicationService;
@@ -42,7 +42,7 @@ public class MedicationController : ControllerBase
     {
         try
         {
-            var createdMedication = await _medicationService.CreateAsync(dto);
+            var createdMedication = await _medicationService.CreatedAsync(dto);
 
             return Ok(createdMedication);
         }
@@ -61,7 +61,7 @@ public class MedicationController : ControllerBase
         }
         try
         {
-            var updateMedication = await _medicationService.UpdateAsync(dto);
+            var updateMedication = await _medicationService.UpdatedAsync(dto);
 
             return Ok(updateMedication);
         }
