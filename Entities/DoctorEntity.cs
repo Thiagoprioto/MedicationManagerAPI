@@ -9,4 +9,6 @@ public class DoctorEntity
         public required string Email { get; set; }
         
         public required string Crm { get; set; }
+        
+        public int UserId { get; set; }
 }

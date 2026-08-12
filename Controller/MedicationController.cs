@@ -1,10 +1,12 @@
 ﻿using MedicationManager.DTO;
 using MedicationManager.Service.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MedicationManager.Controller;
 
 [ApiController]
+[Authorize]
 [Route("api/[controller]")]
 public class MedicationController : ControllerBase
 {
