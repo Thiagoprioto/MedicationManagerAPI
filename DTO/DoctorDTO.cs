@@ -5,5 +5,6 @@ public record DoctorDTO
     int Id, 
     string Name, 
     string Email, 
-    string Crm
+    string Crm,
+    int UserId
 );
