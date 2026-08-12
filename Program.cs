@@ -3,6 +3,7 @@ using MedicationManager.Context;
 using MedicationManager.Exception;
 using MedicationManager.Service;
 using MedicationManager.Service.Interfaces;
+using MedicationManager.Service.Interfaces.IAuth; // <-- ADICIONADO
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -47,6 +48,8 @@ builder.Services.AddControllers();
 
 builder.Services.AddScoped<IMedicationService, MedicationService>();
 builder.Services.AddScoped<IDoctorService, DoctorService>();
+builder.Services.AddScoped<ITokenService, TokenService>();
+
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 builder.Services.AddProblemDetails();
 
