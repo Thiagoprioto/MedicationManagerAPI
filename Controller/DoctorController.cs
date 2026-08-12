@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace MedicationManager.Controller;
 
 [ApiController]
-[Route("api/[controller]")]
+[Route("api/[controller]")] // Rota base: api/doctors (ou api/doctor)
 public class DoctorController : ControllerBase
 {
     private readonly IDoctorService _doctorService;
@@ -15,15 +15,14 @@ public class DoctorController : ControllerBase
         _doctorService = doctorService;
     }
     
-    [HttpGet("GetDoctors")]
+    [HttpGet]
     public async Task<ActionResult<IEnumerable<DoctorDTO>>> GetAll()
     {
-        var doctor = await _doctorService.GetAllDoctorsAsync();
-        
-        return Ok(doctor);
+        var doctors = await _doctorService.GetAllDoctorsAsync();
+        return Ok(doctors);
     }
     
-    [HttpGet("obter/{id:int}")]
+    [HttpGet("{id:int}")]
     public async Task<ActionResult<DoctorDTO>> GetById(int id)
     {
         var doctor = await _doctorService.GetByIdAsync(id);
@@ -36,14 +35,14 @@ public class DoctorController : ControllerBase
         return Ok(doctor);
     }
     
-    [HttpPost("cadastrar")]
+    [HttpPost]
     public async Task<ActionResult<DoctorDTO>> Create([FromBody] DoctorDTO dto)
     {
         try
         {
             var createdDoctor = await _doctorService.CreatedAsync(dto);
-
-            return Ok(createdDoctor);
+            
+            return CreatedAtAction(nameof(GetById), new { id = createdDoctor.Id }, createdDoctor);
         }
         catch (InvalidOperationException ex)
         {
@@ -51,18 +50,18 @@ public class DoctorController : ControllerBase
         }
     }
 
-    [HttpPut("atualizar/{id:int}")]
-    public async Task<ActionResult<DoctorDTO>> Update(int id,[FromBody] DoctorDTO dto)
+    [HttpPut("{id:int}")]
+    public async Task<ActionResult<DoctorDTO>> Update(int id, [FromBody] DoctorDTO dto)
     {
         if (id != dto.Id)
         {
             return BadRequest(new { message = "O ID informado na URL não coincide com o ID do corpo da requisição." });
         }
+
         try
         {
-            var updateDoctor = await _doctorService.UpdatedAsync(dto);
-
-            return Ok(updateDoctor);
+            var updatedDoctor = await _doctorService.UpdatedAsync(dto);
+            return Ok(updatedDoctor);
         }
         catch (InvalidOperationException ex)
         {
@@ -70,12 +69,12 @@ public class DoctorController : ControllerBase
         }
     }
 
-    [HttpDelete("remover/{id:int}")]
-    public async Task<ActionResult<DoctorDTO>> Delete(int id)
+    [HttpDelete("{id:int}")]
+    public async Task<IActionResult> Delete(int id)
     {
         try
         {
-            var  deleteDoctor = await _doctorService.DeleteAsync(id);
+            await _doctorService.DeleteAsync(id);
             return NoContent();
         }
         catch (InvalidOperationException ex)
