@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace MedicationManager.Controller;
 
 [ApiController]
-[Route("api/[controller]")] // Rota base: api/medication
+[Route("api/[controller]")]
 public class MedicationController : ControllerBase
 {
     private readonly IMedicationService _medicationService;
@@ -14,72 +14,46 @@ public class MedicationController : ControllerBase
     {
         _medicationService = medicationService;
     }
-    
+
     [HttpGet]
     public async Task<ActionResult<IEnumerable<MedicationDTO>>> GetAll()
     {
         var medications = await _medicationService.GetAllMedicationAsync();
         return Ok(medications);
     }
-    
+
     [HttpGet("{id:int}")]
     public async Task<ActionResult<MedicationDTO>> GetById(int id)
     {
         var medication = await _medicationService.GetByIdAsync(id);
 
         if (medication == null)
-        {
             return NotFound(new { message = $"Medicamento com o ID {id} não foi encontrado." });
-        }
 
         return Ok(medication);
     }
-    
+
     [HttpPost]
     public async Task<ActionResult<MedicationDTO>> Create([FromBody] MedicationDTO dto)
     {
-        try
-        {
-            var createdMedication = await _medicationService.CreatedAsync(dto);
-            
-            return CreatedAtAction(nameof(GetById), new { id = createdMedication.Id }, createdMedication);
-        }
-        catch (InvalidOperationException ex)
-        {
-            return BadRequest(new { message = ex.Message });
-        }
+        var createdMedication = await _medicationService.CreatedAsync(dto);
+        return CreatedAtAction(nameof(GetById), new { id = createdMedication.Id }, createdMedication);
     }
 
     [HttpPut("{id:int}")]
     public async Task<ActionResult<MedicationDTO>> Update(int id, [FromBody] MedicationDTO dto)
     {
         if (id != dto.Id)
-        {
-            return BadRequest(new { message = "O ID informado na URL não coincide com o ID do corpo da requisição." });
-        }
+            return BadRequest(new { message = "O ID da URL não coincide com o ID informado no corpo da requisição." });
 
-        try
-        {
-            var updatedMedication = await _medicationService.UpdatedAsync(dto);
-            return Ok(updatedMedication);
-        }
-        catch (InvalidOperationException ex)
-        {
-            return BadRequest(new { message = ex.Message });
-        }
+        var updatedMedication = await _medicationService.UpdatedAsync(dto);
+        return Ok(updatedMedication);
     }
 
     [HttpDelete("{id:int}")]
     public async Task<IActionResult> Delete(int id)
     {
-        try
-        {
-            await _medicationService.DeleteAsync(id);
-            return NoContent();
-        }
-        catch (InvalidOperationException ex)
-        {
-            return BadRequest(new { message = ex.Message });
-        }
+        await _medicationService.DeleteAsync(id);
+        return NoContent();
     }
 }

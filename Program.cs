@@ -1,4 +1,5 @@
 using MedicationManager.Context;
+using MedicationManager.Exception;
 using MedicationManager.Service;
 using MedicationManager.Service.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -15,15 +16,18 @@ builder.Services.AddControllers();
 
 builder.Services.AddScoped<IMedicationService, MedicationService>();
 builder.Services.AddScoped<IDoctorService, DoctorService>();
+builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+builder.Services.AddProblemDetails();
 
 builder.Services.AddOpenApi();
 
 var app = builder.Build();
 
-    app.MapOpenApi();
-    app.MapScalarApiReference();
+app.MapOpenApi();
+app.MapScalarApiReference();
 
 app.UseHttpsRedirection();
+app.UseExceptionHandler();
 
 app.MapControllers();
 
