@@ -3,13 +3,25 @@ using MedicationManager.Context;
 using MedicationManager.Exception;
 using MedicationManager.Service;
 using MedicationManager.Service.Interfaces;
-using MedicationManager.Service.Interfaces.IAuth; // <-- ADICIONADO
+using MedicationManager.Service.Interfaces.IAuth;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi;
 using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Configuração do CORS
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(policy =>
+    {
+        policy.AllowAnyOrigin()
+              .AllowAnyHeader()
+              .AllowAnyMethod();
+    });
+});
 
 var connectionString = builder.Configuration.GetConnectionString("MedicationManagerOnlineDB");
 
@@ -43,7 +55,6 @@ builder.Services.AddAuthentication(options =>
 });
 
 builder.Services.AddAuthorization();
-
 builder.Services.AddControllers();
 
 builder.Services.AddScoped<IMedicationService, MedicationService>();
@@ -53,15 +64,16 @@ builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 builder.Services.AddProblemDetails();
 
-builder.Services.AddOpenApi();
-
-builder.Services.AddCors(options =>
+// Configuração do OpenAPI forçando HTTPS nos Servidores
+builder.Services.AddOpenApi(options =>
 {
-    options.AddDefaultPolicy(policy =>
+    options.AddDocumentTransformer((document, context, cancellationToken) =>
     {
-        policy.AllowAnyOrigin()
-            .AllowAnyHeader()
-            .AllowAnyMethod();
+        document.Servers = new List<OpenApiServer>
+        {
+            new OpenApiServer { Url = "https://medicationmanagerapi.onrender.com" }
+        };
+        return Task.CompletedTask;
     });
 });
 
@@ -70,9 +82,9 @@ var app = builder.Build();
 app.MapOpenApi();
 app.MapScalarApiReference();
 
-app.UseCors();
-
 app.UseHttpsRedirection();
+
+app.UseCors();
 
 app.UseExceptionHandler();
 
