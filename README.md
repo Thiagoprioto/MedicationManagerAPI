@@ -2,7 +2,7 @@
 
 # Medication Manager API
 
-Este projeto é uma **API REST** para o gerenciamento de médicos e medicamentos, desenvolvida em **C#** com o framework **.NET 9**.  
+Este projeto é uma **API REST** para o gerenciamento de médicos e medicamentos, desenvolvida em **C#** com o framework **.NET 10**.  
 A aplicação permite o **cadastro, atualização, consulta e remoção de medicamentos e médicos**, com suporte a **vínculo com usuários autenticados via JWT**, utilizando uma arquitetura em camadas bem definida, ORM moderno e um sistema global de tratamento de exceções.
 
 🌐 **API em Produção / Documentação Live:**  
